@@ -96,7 +96,6 @@ const load = (json, confirm) => {
     } else {
         json.forEach(trade => rows.push(Object.values(trade)));
     }
-    console.log("Got here");
 
     // console.log(table(rows, config));
 };
