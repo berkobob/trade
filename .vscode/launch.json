@@ -9,7 +9,7 @@
             "request": "launch",
             "name": "Launch Program",
             "program": "${workspaceFolder}/trade.js",
-            "args": ["test.csv"]
+            "args": ["load", "test.csv", "-y"]
         }
     ]
 }

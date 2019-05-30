@@ -2,11 +2,21 @@
 
 const program = require("commander");
 const csv = require("csvtojson");
-const chalk = require("chalk");
 const table = require("table").table;
-const request = require("request");
+const chalk = require("chalk");
 
-const cols = [
+const load = require("./load");
+
+const heading = chalk.bold;
+
+/*
+ ** The names of the fields in the database
+ ** Create JSON using these values as keys
+ ** and the csv as values to match was tradelog
+ ** is expecting
+ */
+
+const headers = [
     "date",
     "buyOrSell",
     "quantity",
@@ -24,26 +34,35 @@ const cols = [
     "notes",
 ];
 
-const rows = [
+/*
+ ** Column names to display raw csv data
+ ** formatted as a row in an array so that each
+ ** trade can be another row and then displayed
+ ** as a table
+ */
+const data = [
     [
-        "Date",
-        "",
-        "Qty",
-        "Symbol",
-        "Expiry",
-        "Strike",
-        "",
-        "Trade",
-        "Total",
-        "Comm",
-        "Net Cash",
-        "",
-        "",
-        "Mul",
-        "Notes",
+        heading("Date"),
+        heading(""),
+        heading("Qty"),
+        heading("Symbol"),
+        heading("Expiry"),
+        heading("Strike"),
+        heading(""),
+        heading("Trade"),
+        heading("Total"),
+        heading("Comm"),
+        heading("Net Cash"),
+        heading(""),
+        heading(""),
+        heading("Mul"),
+        heading("Notes"),
     ],
 ];
 
+/*
+ ** config to format the table that displays the raw csv
+ */
 const config = {
     columns: {
         0: { alignment: "center" }, // Date
@@ -64,42 +83,6 @@ const config = {
     },
 };
 
-const error = chalk.red.inverse.bold;
-const success = chalk.green.inverse.bold;
-const url = "https://mytradelog.herokuapp.com/api";
-const headers = { "content-type": "application/json" };
-
-const load = (json, confirm) => {
-    if (confirm) {
-        json.forEach(trade => {
-            // if (trade.putOrCall === "") trade.putOrCall = "P";
-            if (trade.putOrCall === "") delete trade.putOrCall;
-
-            request(
-                {
-                    url,
-                    method: "POST",
-                    headers,
-                    json: trade,
-                },
-                (err, res, body) => {
-                    if (err) console.log(err);
-                    // if (res) console.log("RESULT", res.statusCode);
-                    if (res) {
-                        console.log("RESULT", res.statusMessage);
-                        rows.push(Object.values(trade));
-                    }
-                    // if (body) console.log("BODY", body);
-                },
-            );
-        });
-    } else {
-        json.forEach(trade => rows.push(Object.values(trade)));
-    }
-
-    // console.log(table(rows, config));
-};
-
 /*
  ** The load function
  */
@@ -108,23 +91,31 @@ program
     .description("Load a CSV from IB to tradelog")
     .option("-n --noheader", "CSV has no header row", false)
     .option("-y --confirm", "I am happy to log these trades", false)
-    .action(
-        (filename, cmd) =>
-            csv({
-                noheader: cmd.noheader,
-                headers: cols,
-            })
-                .fromFile(filename)
-                .then(json => load(json, cmd.confirm))
-                .catch(e =>
+    .action((filename, cmd) =>
+        csv({
+            noheader: cmd.noheader,
+            headers,
+        })
+            .fromFile(filename)
+            .then(json => {
+                if (cmd.confirm) load(json);
+                else {
+                    json.forEach(trade => data.push(Object.values(trade)));
+                    console.log(table(data, config));
                     console.log(
-                        error("ERROR:"),
-                        "File",
-                        chalk.bold(filename),
-                        "not found",
-                    ),
+                        chalk.yellow.inverse.bold("RESULT:"),
+                        `There are ${data.length - 1} trades in ${filename}`,
+                    );
+                }
+            })
+            .catch(e =>
+                console.log(
+                    error("ERROR:"),
+                    "File",
+                    chalk.bold(filename),
+                    "not found",
                 ),
-        // load(filename, cmd.noheader).then(res => console.log(res.length)),
+            ),
     );
 
 program
