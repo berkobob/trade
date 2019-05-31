@@ -1,29 +1,20 @@
-const numeral = require("numeral");
 const chalk = require("chalk");
 
-const success = chalk.green.inverse.bold;
+const colour = {
+    heading: chalk.blue.inverse.bold,
+    warning: msg => console.log(chalk.yellow.inverse.bold("WARNING:"), msg),
+    error: msg => console.log(chalk.red.inverse.bold("ERROR:"), msg),
+    success: msg => console.log(chalk.green.inverse.bold("SUCCESS:"), msg),
+    uploaded: chalk.green.inverse,
+};
 
-numeral.defaultFormat("$0,0.00");
+const url = {
+    heroku: "https://mytradelog.herokuapp.com/api",
+    local: "http://localhost:3000/api",
+    error: "error",
+};
 
-function formatRow(row) {
-    // trade date
-    row.date = new Date(row.date);
-    row.date = row.date.toLocaleDateString("en-uk");
-
-    // expiry
-    if (row.expiry) {
-        row.expiry = new Date(row.expiry);
-        row.expiry = row.expiry.toLocaleDateString("en-uk");
-    }
-
-    row.tradePrice = numeral(row.tradePrice).format(); // trade price
-    row.proceeds = numeral(row.proceeds).format(); // proceeds
-    row.commission = numeral(row.commission).format(); // commission
-    row.netCash = numeral(row.netCash).format(); // net cash
-    row.__v = success("SUCCESS"); // __v becomes result
-
-    // return values as an array
-    return Object.values(row);
-}
-
-module.exports = { formatRow };
+module.exports = {
+    colour,
+    url,
+};
