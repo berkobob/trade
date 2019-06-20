@@ -5,7 +5,7 @@ const { colour, url } = require("./utils");
 const Stream = require("./trade-stream");
 
 const body = {
-    url: url.local,
+    url: url.heroku,
     method: "POST",
     headers: {
         "content-type": "application/json",

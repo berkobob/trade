@@ -22,7 +22,7 @@ if (program.args.length === 0) program.args[0] = ' ';
 
 program.args.forEach(symbol => {
     request(
-        { url: url.local + '?symbol=' + symbol, body: 'Antoine' },
+        { url: url.heroku + '?symbol=' + symbol, },
         (err, res) => {
             if (err) throw err;
             JSON.parse(res.body).forEach(trade => stream.write(trade));
