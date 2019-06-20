@@ -24,13 +24,13 @@ module.exports = json => {
                     const errors = Object.keys(res.body.errors);
                     errors.forEach(col => {
                         if (!trade[col]) trade[col] = "?";
-                        trade[col] = error(trade[col]);
+                        trade[col] = chalk.red.inverse(trade[col]);
                     });
                     trade.symbol = trade.symbol.slice(0, 4);
                     row = Object.values(trade);
-                    row.unshift(error(res.body._message));
-                    row.push(error("FAILED"));
-                    stream.write(row);
+                    row.unshift(chalk.red.inverse(res.body._message));
+                    row.push(chalk.red.inverse("FAILED"));
+                    stream.error(row);
                 }
             });
             return true;

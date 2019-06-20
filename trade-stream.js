@@ -88,6 +88,10 @@ class Stream {
     write(row) {
         this.stream.write(this.formatRow(row));
     }
+
+    error(row) {
+        this.stream.write(row);
+    }
 }
 
 module.exports = Stream;
