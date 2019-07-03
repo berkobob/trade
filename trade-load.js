@@ -3,7 +3,7 @@ const csv = require("csvtojson");
 const table = require("table").table;
 const chalk = require("chalk");
 
-const upload = require("./trade-upload");
+const upload = require("./upload");
 const { colour } = require("./utils");
 
 program

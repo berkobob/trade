@@ -1,14 +1,14 @@
-const chalk = require('chalk');
-const request = require('request');
+const chalk = require("chalk");
+const request = require("request");
 
-const { colour, url } = require('./utils');
-const Stream = require('./trade-stream-load');
+const { colour, url } = require("./utils");
+const Stream = require("./stream-load");
 
 const body = {
-    url: url.heroku,
-    method: 'POST',
+    url,
+    method: "POST",
     headers: {
-        'content-type': 'application/json',
+        "content-type": "application/json",
     },
 };
 
@@ -23,20 +23,20 @@ module.exports = json => {
                 else if (res.statusCode === 400) {
                     const errors = Object.keys(res.body.errors);
                     errors.forEach(col => {
-                        if (!trade[col]) trade[col] = '?';
+                        if (!trade[col]) trade[col] = "?";
                         trade[col] = chalk.red.inverse(trade[col]);
                     });
                     trade.symbol = trade.symbol.slice(0, 4);
                     row = Object.values(trade);
                     row.unshift(chalk.red.inverse(res.body._message));
-                    row.push(chalk.red.inverse('FAILED'));
+                    row.push(chalk.red.inverse("FAILED"));
                     stream.error(row);
                 }
             });
             return true;
         });
     } catch (e) {
-        colour.error('\n' + e.message);
+        colour.error("\n" + e.message);
     }
 };
 

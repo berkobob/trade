@@ -1,5 +1,6 @@
 const createStream = require("table").createStream;
 const numeral = require("numeral");
+const moment = require("moment");
 
 const { colour } = require("./utils");
 
@@ -8,23 +9,12 @@ numeral.defaultFormat("$0,0.00");
 class Stream {
     constructor() {
         this.formatRow = row => {
-            // trade date
-            row.date = new Date(row.date);
-            row.date = row.date.toLocaleDateString("en-uk");
-
-            // expiry
-            if (row.expiry) {
-                row.expiry = new Date(row.expiry);
-                row.expiry = row.expiry.toLocaleDateString("en-uk");
-            }
-
+            row.date = moment(row.date).format("DD/MM/YY");
+            if (row.expiry) row.expiry = moment(row.expiry).format("DD/MM/YY");
             row.tradePrice = numeral(row.tradePrice).format(); // trade price
             row.proceeds = numeral(row.proceeds).format(); // proceeds
             row.commission = numeral(row.commission).format(); // commission
             row.netCash = numeral(row.netCash).format(); // net cash
-            row.__v = colour.uploaded("SUCCESS"); // __v becomes result
-
-            // return values as an array
             return Object.values(row);
         };
 
@@ -48,7 +38,6 @@ class Stream {
             colour.heading(""),
             colour.heading("Mul"),
             colour.heading(" Notes  "),
-            colour.heading("RESULT "),
         ];
 
         /*
@@ -59,7 +48,7 @@ class Stream {
             columnDefault: {
                 width: 1,
             },
-            columnCount: 17,
+            columnCount: 16,
             columns: {
                 0: { alignment: "center", width: 24 }, // ID
                 1: { alignment: "center", width: 13 }, // Date
@@ -74,10 +63,9 @@ class Stream {
                 10: { alignment: "right", width: 7 }, // Commission
                 11: { alignment: "right", width: 10 }, // Net cash
                 12: { alignment: "center", width: 3 }, // Asset
-                13: { alignment: "center" }, // Open or Close
+                13: { alignment: "center", width: 4 }, // Open or Close
                 14: { alignment: "right", width: 3 }, // Multiplier
                 15: { alignment: "left", width: 8 }, // Notes
-                16: { alignment: "center", width: 10 }, // Result
             },
         };
 

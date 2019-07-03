@@ -1,17 +1,18 @@
-const createStream = require('table').createStream;
-const numeral = require('numeral');
+const createStream = require("table").createStream;
+const numeral = require("numeral");
+const moment = require("moment");
 
-const { colour } = require('./utils');
+const { colour } = require("./utils");
 
-numeral.defaultFormat('$0,0.00');
+numeral.defaultFormat("$0,0.00");
 
 class Stream {
     constructor() {
         this.formatRow = row => {
             let results = [
                 row.symbol,
-                new Date(row.open).toLocaleDateString('en-uk'),
-                new Date(row.closed).toLocaleDateString('en-uk'),
+                moment(row.open).format("DD/MM/YY"),
+                moment(row.closed).format("DD/MM/YY"),
                 row.days,
                 numeral(row.proceeds).format(), // proceeds
                 numeral(row.commission).format(), // commission
@@ -26,14 +27,14 @@ class Stream {
          ** The column headings for the results table
          */
         const header = [
-            colour.heading('Symbol'),
-            colour.heading('Open'),
-            colour.heading('Closed'),
-            colour.heading('Days'),
-            colour.heading('Proceeds'),
-            colour.heading('Comm'),
-            colour.heading('Net Cash'),
-            colour.heading('Daily Cash'),
+            colour.heading("Symbol "),
+            colour.heading("   Open  "),
+            colour.heading("  Closed "),
+            colour.heading("      Days"),
+            colour.heading("      Proceeds"),
+            colour.heading("    Commission"),
+            colour.heading("      Net Cash"),
+            colour.heading("    Daily Cash"),
         ];
 
         /*
@@ -46,14 +47,14 @@ class Stream {
             },
             columnCount: 8,
             columns: {
-                0: { alignment: 'center', width: 7 }, // Symbol
-                1: { alignment: 'center', width: 17 }, // Open
-                2: { alignment: 'center', width: 17 }, // Closed
-                3: { alignment: 'right', width: 10 }, // Days
-                4: { alignment: 'right', width: 15 }, // Proceeds
-                5: { alignment: 'right', width: 15 }, // Commission
-                6: { alignment: 'right', width: 15 }, // Net Cash
-                7: { alignment: 'right', width: 15 }, // Daily Cash
+                0: { alignment: "center", width: 7 }, // Symbol
+                1: { alignment: "center", width: 9 }, // Open
+                2: { alignment: "center", width: 9 }, // Closed
+                3: { alignment: "right", width: 10 }, // Days
+                4: { alignment: "right", width: 15 }, // Proceeds
+                5: { alignment: "right", width: 15 }, // Commission
+                6: { alignment: "right", width: 15 }, // Net Cash
+                7: { alignment: "right", width: 15 }, // Daily Cash
             },
         };
 
@@ -71,10 +72,10 @@ class Stream {
 
     summary(symbol) {
         this.stream.write([
-            '',
-            '',
-            '',
-            colour.bold('SUMMARY:'),
+            "",
+            "",
+            "",
+            colour.bold("SUMMARY:"),
             symbol.proceeds > 0
                 ? colour.positive(numeral(symbol.proceeds).format())
                 : colour.negative(numeral(symbol.proceeds).format()),
@@ -82,7 +83,7 @@ class Stream {
             symbol.netCash > 0
                 ? colour.positive(numeral(symbol.netCash).format())
                 : colour.negative(numeral(symbol.netCash).format()),
-            '',
+            "",
         ]);
     }
 }

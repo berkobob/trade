@@ -8,8 +8,11 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceFolder}/trade.js",
-            "args": ["load", "test.csv", "-y"]
+            "program": "${workspaceFolder}/trade-get.js",
+            "args": ["-o"],
+            "restart": true,
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen"
         }
     ]
 }
